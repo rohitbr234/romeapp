@@ -315,7 +315,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.image("roman_bg.png", use_container_width=True)
+st.image("roman_bg.jpg", use_container_width=True)
 st.title("🏛 Ancient Rome Interactive")
 st.markdown("Welcome to Ancient Rome! Learn, chat, and test your knowledge.")
 
