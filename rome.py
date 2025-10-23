@@ -254,6 +254,18 @@ chatbot_facts = {
         "politics": "I vote in assemblies and can run for office. My voice helps shape Rome’s laws and destiny.",
         "rights": "As a citizen, I’m protected from torture and can only be judged by Roman law.",
         "holidays": "I enjoy public holidays like Lupercalia, Caristia, Matronalia, and Saturnalia. These days are for family gatherings, feasting, and games. I participate fully, sometimes giving gifts or joining in the revelry and decorations."
+    },
+    "Female Citizen": {
+        "life": "As a Roman woman, I am a citizen but cannot vote or hold public office. My life centers on family, household management, and religious duties. My reputation and virtue reflect on my family’s honor.",
+        "family": "Family is the foundation of Roman life. I owe obedience to my father or husband, yet within the home, I manage servants, finances, and daily affairs. Wealthy women often oversee large estates and host social gatherings.",
+        "work": "Most women work within the home, spinning, weaving, or managing domestic tasks. Wealthier women supervise slaves, while poorer women may sell goods in markets or assist in family businesses.",
+        "food": "My meals are simple—bread, olives, cheese, and fruit. On special occasions, we enjoy meats or sweets. Women prepare and oversee food for the household, ensuring offerings are made to the household gods.",
+        "clothing": "I wear a long tunic beneath a stola, a garment that shows my status as a respectable married woman. For public outings, I cover myself with a palla, a cloak draped gracefully over the shoulders.",
+        "religion": "Religion fills my life. I honor the household gods, Lares and Penates, and take part in festivals like Matronalia, which celebrates mothers and wives in honor of the goddess Iuno.",
+        "education": "Girls learn reading, writing, and household management. Wealthy women may study literature or philosophy at home, though formal education focuses more on preparing us to manage households and uphold family virtue.",
+        "rights": "As a woman, I am a Roman citizen but cannot vote or serve in office. However, I can own property, make wills, and manage dowries. Influential women sometimes shape politics indirectly through family ties.",
+        "marriage": "Marriage joins families and secures alliances. A wife brings a dowry, manages the home, and bears children. In some forms of marriage, I remain under my father’s authority; in others, my husband becomes my legal guardian.",
+        "holidays": "I celebrate festivals such as Matronalia, when husbands give gifts to wives and mothers. During Caristia, families reunite to honor love and harmony. Women join in public feasts and wear festive clothing on such days."
     }
 }
 
@@ -329,16 +341,17 @@ if mode == "🏺 Learn":
     role = st.selectbox("Select a Roman Role:", list(chatbot_facts.keys()))
     st.session_state.role = role
 
-    st.markdown(f"### You are a {role}")
+    st.markdown(f"### You are talking to a {role}")
     st.markdown(f"Ask about: `{', '.join(keywords_intro[role])}`")
 
     # Chat display
     chat_container = st.container()
-    for speaker, msg in st.session_state.chat_log:
-        if speaker == "user":
-            chat_container.markdown(f"**You:** {msg}")
+    for item in st.session_state.chat_log:
+        if item[0] == "user":
+            chat_container.markdown(f"**You:** {item[1]}")
         else:
-            chat_container.markdown(f"**{role}:** {msg}")
+            bot_role = item[2]
+            chat_container.markdown(f"**{bot_role}:** {item[1]}")
 
     # Input
     user_input = st.text_input("Ask me something...", key="chat_input")
@@ -350,8 +363,8 @@ if mode == "🏺 Learn":
             if matched:
                 reply = chatbot_facts[role][matched[0]]
             else:
-                reply = "I’m not sure about that — try one of my known topics!"
-            st.session_state.chat_log.append(("bot", reply))
+                reply = "I’m not sure about that — make sure you include one of the keywords listed above in your question."
+            st.session_state.chat_log.append(("bot", reply, role))  
             st.rerun()
 
     if st.button("Clear Conversation"):
