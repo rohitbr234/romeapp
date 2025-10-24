@@ -5,52 +5,6 @@ import io
 import base64
 import os
 
-# --- Sidebar dark mode toggle ---
-dark_mode = st.sidebar.toggle("🌙 Dark mode", value=False)
-
-# --- Base CSS for both modes ---
-light_css = """
-<style>
-.stApp {
-    background-color: #f7f3ef;
-    color: #000000;
-}
-[data-testid="stSidebar"] {
-    background-color: #e6ded6;
-}
-button[kind="primary"], button {
-    background-color: #c8b39b !important;
-    color: black !important;
-    border: none !important;
-    font-weight: bold;
-}
-</style>
-"""
-
-dark_css = """
-<style>
-.stApp {
-    background-color: #2b2b2b;
-    color: #ffffff;
-}
-[data-testid="stSidebar"] {
-    background-color: #1e1e1e;
-}
-button[kind="primary"], button {
-    background-color: #8b735b !important;
-    color: white !important;
-    border: none !important;
-    font-weight: bold;
-}
-</style>
-"""
-
-# --- Apply the selected theme ---
-if dark_mode:
-    st.markdown(dark_css, unsafe_allow_html=True)
-else:
-    st.markdown(light_css, unsafe_allow_html=True)
-
 # Initialize session state
 if "music_playing" not in st.session_state:
     st.session_state.music_playing = True
@@ -337,24 +291,31 @@ st.markdown(
     <style>
     /* Main app area */
     .stApp {
-        background-color: #a1866f;
+        background-color: #FFB300;
         color: #000000;
     }
     
     /* Sidebar */
     [data-testid="stSidebar"] {
-        background-color: #a1866f;
+        background-color: #BD3B30;
         color: #000000;
     }
 
     /* Top menu & hamburger */
     header, .css-18e3th9 {
-        background-color: #a1866f;
+        background-color: #8e001c;
     }
 
     /* Optional: buttons, selects, etc. text color */
     .stButton>button, .stSelectbox>div, .stRadio>div {
         color: #000000;
+    }
+
+    button[kind="primary"], button {
+        background-color: #c8b39b !important;
+        color: black !important;
+        border: none !important;
+        font-weight: bold;
     }
     </style>
     """,
@@ -362,7 +323,7 @@ st.markdown(
 )
 
 st.image("roman_bg.jpg", use_container_width=True)
-st.title("🏛 Ancient Rome Interactive")
+st.title("🏛 The Voice of Rome")
 st.markdown("Welcome to Ancient Rome! Learn, chat, and test your knowledge.")
 
 # Sidebar navigation
@@ -382,7 +343,7 @@ if "chat_log" not in st.session_state:
 
 # ============== LEARN MODE ==============
 if mode == "🏺 Learn":
-    st.header("Learn About Roman Roles")
+    st.header("Learn About Roman Society")
 
     role = st.selectbox("Select a Roman Role:", list(chatbot_facts.keys()))
     st.session_state.role = role
@@ -390,32 +351,41 @@ if mode == "🏺 Learn":
     st.markdown(f"### You are talking to a {role}")
     st.markdown(f"Ask about: `{', '.join(keywords_intro[role])}`")
 
-    # Chat display
+    if "chat_log" not in st.session_state:
+        st.session_state.chat_log = []
+    if "user_input" not in st.session_state:
+        st.session_state.user_input = ""
+
+    def send_message():
+        user_message = st.session_state.user_input.strip()
+        if user_message:
+            st.session_state.chat_log.append(("user", user_message))
+            matched = [k for k in chatbot_facts[role] if k in user_message.lower()]
+            if matched:
+                reply = chatbot_facts[role][matched[0]]
+            else:
+                reply = "I’m not sure about that — make sure you include one of the keywords listed above in your question."
+            st.session_state.chat_log.append(("bot", reply, role))
+            st.session_state.user_input = ""
+
     chat_container = st.container()
     for item in st.session_state.chat_log:
         if item[0] == "user":
             chat_container.markdown(f"**You:** {item[1]}")
         else:
-            bot_role = item[2]
-            chat_container.markdown(f"**{bot_role}:** {item[1]}")
+            chat_container.markdown(f"**{item[2]}:** {item[1]}")
 
-    # Input
-    user_input = st.text_input("Ask me something...", key="chat_input")
+    st.text_input(
+        "Ask me something...",
+        key="user_input",
+        placeholder="Type your question here...",
+        on_change=send_message
+    )
 
-    if st.button("Send"):
-        if user_input.strip():
-            st.session_state.chat_log.append(("user", user_input))
-            matched = [k for k in chatbot_facts[role] if k in user_input.lower()]
-            if matched:
-                reply = chatbot_facts[role][matched[0]]
-            else:
-                reply = "I’m not sure about that — make sure you include one of the keywords listed above in your question."
-            st.session_state.chat_log.append(("bot", reply, role))  
-            st.rerun()
+    st.button("Send", on_click=send_message)
+    st.button("Clear Conversation", on_click=lambda: st.session_state.chat_log.clear())
 
-    if st.button("Clear Conversation"):
-        st.session_state.chat_log = []
-        st.rerun()
+
 
 
 # ============== QUIZ MODE ==============
