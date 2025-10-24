@@ -291,13 +291,13 @@ st.markdown(
     <style>
     /* Main app area */
     .stApp {
-        background-color: #FFB300;
+        background-color: #8B0000;
         color: #000000;
     }
     
     /* Sidebar */
     [data-testid="stSidebar"] {
-        background-color: #c78d06;
+        background-color: #D4AF37;
         color: #000000;
     }
 
