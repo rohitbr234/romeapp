@@ -5,6 +5,52 @@ import io
 import base64
 import os
 
+# --- Sidebar dark mode toggle ---
+dark_mode = st.sidebar.toggle("🌙 Dark mode", value=False)
+
+# --- Base CSS for both modes ---
+light_css = """
+<style>
+.stApp {
+    background-color: #f7f3ef;
+    color: #000000;
+}
+[data-testid="stSidebar"] {
+    background-color: #e6ded6;
+}
+button[kind="primary"], button {
+    background-color: #c8b39b !important;
+    color: black !important;
+    border: none !important;
+    font-weight: bold;
+}
+</style>
+"""
+
+dark_css = """
+<style>
+.stApp {
+    background-color: #2b2b2b;
+    color: #ffffff;
+}
+[data-testid="stSidebar"] {
+    background-color: #1e1e1e;
+}
+button[kind="primary"], button {
+    background-color: #8b735b !important;
+    color: white !important;
+    border: none !important;
+    font-weight: bold;
+}
+</style>
+"""
+
+# --- Apply the selected theme ---
+if dark_mode:
+    st.markdown(dark_css, unsafe_allow_html=True)
+else:
+    st.markdown(light_css, unsafe_allow_html=True)
+
 # Initialize session state
 if "music_playing" not in st.session_state:
     st.session_state.music_playing = True
