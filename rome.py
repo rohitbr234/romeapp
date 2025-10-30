@@ -4,6 +4,7 @@ import random
 import io
 import base64
 import os
+import time
 
 # Initialize session state
 if "music_playing" not in st.session_state:
@@ -378,8 +379,7 @@ if mode == "🏺 Learn":
     st.text_input(
         "Ask me something...",
         key="user_input",
-        placeholder="Type your question here...",
-        on_change=send_message
+        placeholder="Type your question here..."
     )
 
     st.button("Send", on_click=send_message)
@@ -414,10 +414,7 @@ elif mode == "📜 Quiz":
             choice = st.radio("Your answer:", options, key=f"q{st.session_state.quiz_index}")
             if st.button("Submit Answer"):
                 if options.index(choice) == correct_index:
-                    st.success("✅ Correct!")
                     st.session_state.quiz_score += 1
-                else:
-                    st.error("❌ Incorrect!")
                 st.session_state.quiz_index += 1
                 st.rerun()
 
